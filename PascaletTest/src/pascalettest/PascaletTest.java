@@ -92,52 +92,98 @@ public class PascaletTest
     
     public static void main(String[] args) 
     {
-        BufferedReader reader;
-        HashMap<String, String> variables = new HashMap<>(100); 
-        HashMap<String, Integer> map = new HashMap<>(100); 
-        try 
+    	HashMap<String, String[]> global = new HashMap<String, String[]>();
+    	HashMap<String, String[]> main = new HashMap<String, String[]>();
+    	HashMap<String, String[]> funcproc = new HashMap<String, String[]>();
+    	
+    	int scopeflag=0;	//0 is global, 1 is procedure or function, 2 is inside main
+    	
+    	String[] valueAndType = new String[2];
+    	// flag if may naread na procedure or function then magchchange ang pag read sa begin
+    	BufferedReader reader;
+    	
+    	try 
         {
-            reader = new BufferedReader(new FileReader( "/Users/Aric/Desktop/X22_BroDudeTsong.pas"));
+            reader = new BufferedReader(new FileReader( "C:\\Users\\Aric\\Desktop\\X22_BroDudeTsong.pas"));
             String line = reader.readLine();
             
             while (line != null) 
             {
-                if(line.contains("var"))
+            	if(line.contains("var"))
                 {
-//                    variables.put()
-                    //System.out.println((line.substring(0 , line.indexOf(":"))).replace("    ",""));
-                    //System.out.println(line.substring(line.lastIndexOf(":")+2));
-                    
-                    //
-                    map.put((line.substring(0 , line.indexOf(":"))).replace("    ",""), 10); 
-                    System.out.println(eval("1+2-3*4/5"));
-                    if(line.substring(line.lastIndexOf(":")+2).contains("1"))
-                    {
-                        //stuff
-                    }
+            		//remove var and data type; only keep variables
+            		//still not separated per variable
+            		//System.out.println(line.replace("var", "").replace((line.substring(line.lastIndexOf(":")+1)).toString(),"").replace(";", "").replace(":", "").replace(" ", "")); 
+            		
+            		//now separated per variable
+            		String splitVariables = line.replace("var", "").replace((line.substring(line.lastIndexOf(":")+1)).toString(),"").replace(";", "").replace(":", "").replace(" ", "");
+            		String[] splitVariablesArr = splitVariables.split("[\\, ]");
+            		
+            		//put variable name as key and value and type as string array value for hashmap;
+            		for(int i=0;i<splitVariablesArr.length;i++)
+            		{
+            			System.out.println(splitVariablesArr[i]);
+            			valueAndType[0] = "-6969";//value initially empty, value is for checking if empty
+            			valueAndType[1] = line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", "");
+            			if(scopeflag==0)
+            			{
+            				// Check is key exists in the Map 
+            		        boolean isKeyPresent1 = global.containsKey(splitVariablesArr[i]); 
+            	            if(isKeyPresent1 == false)
+            	            {
+            	            	global.put(splitVariablesArr[i], valueAndType);
+            	            	System.out.println("Stored in global");
+            	            	System.out.println(Arrays.toString(global.get(splitVariablesArr[i])));
+            	            }
+            	            else
+            	            	System.out.println("Error, duplicate variable/n/n");
+            			}
+            			if(scopeflag==1)
+            			{
+            				boolean isKeyPresent2 = funcproc.containsKey(splitVariablesArr[i]); 
+            	            if(isKeyPresent2 == false)
+            	            {
+            	            	funcproc.put(splitVariablesArr[i], valueAndType);
+            	            	System.out.println("Stored in funcproc");
+            	            	System.out.println(Arrays.toString(funcproc.get(splitVariablesArr[i])));
+            	            }
+            	            else
+            	            	System.out.println("Error, duplicate variable/n/n");
+            			}
+            			if(scopeflag==2)
+            			{
+            				boolean isKeyPresent3 = main.containsKey(splitVariablesArr[i]); 
+            	            if(isKeyPresent3 == false)
+            	            {
+            	            	main.put(splitVariablesArr[i], valueAndType);
+            	            	System.out.println("Stored in main");
+            	            	System.out.println(Arrays.toString(main.get(splitVariablesArr[i])));
+            	            }
+            	            else
+            	            	System.out.println("Error, duplicate variable/n/n");
+            			}
+            		}
+            		//print entire array of variables
+            		//System.out.println(Arrays.toString(tokens));
+            		
+            		//get data type
+            		System.out.println(line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", ""));
                 }
-                
-                if(line.contains(":="))
-                {
-                    //System.out.println((line.substring(0 , line.indexOf(":"))).replace("    ",""));
-                    //System.out.println(line.substring(line.lastIndexOf(":")+2));
-                    
-                    //
-                    map.put((line.substring(0 , line.indexOf(":"))).replace("    ",""), 10); 
-                    System.out.println(eval("1+2+3"));
-                    if(line.substring(line.lastIndexOf(":")+2).contains("1"))
-                    {
-                        //stuff
-                    }
-                }
-                
-                
-                //System.out.println(line);
-                
-                // read next line
+            	
+            	if(line.contains("procedure")||line.contains("function"))
+            		scopeflag=1;
+            	
+            	if(line.contains("begin")&&scopeflag==0)
+            		scopeflag=2;
+            	
+            	if(line.contains("end"))
+            		scopeflag=0;
+            		
                 line = reader.readLine();
+                
             }
             reader.close();
-        } catch (IOException e) { }
+        } 
+    	catch (IOException e) { }
     }
 }
