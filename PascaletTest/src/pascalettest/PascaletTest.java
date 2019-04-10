@@ -90,21 +90,31 @@ public class PascaletTest
         }.parse();
     }
     
+    public static boolean containsVar(String str)
+    {
+    	if(str.contains("A"))
+    		return true;
+    	return false;
+    }
+    
     public static void main(String[] args) 
     {
     	HashMap<String, String[]> global = new HashMap<String, String[]>();
     	HashMap<String, String[]> main = new HashMap<String, String[]>();
     	HashMap<String, String[]> funcproc = new HashMap<String, String[]>();
     	
+    	// flag if may naread na procedure or function then magchchange ang pag read sa begin
     	int scopeflag=0;	//0 is global, 1 is procedure or function, 2 is inside main
     	
     	String[] valueAndType = new String[2];
-    	// flag if may naread na procedure or function then magchchange ang pag read sa begin
+    	
     	BufferedReader reader;
+    	BufferedReader reader2;
     	
     	try 
         {
             reader = new BufferedReader(new FileReader( "C:\\Users\\Aric\\Desktop\\X22_BroDudeTsong.pas"));
+            //reader = new BufferedReader(new FileReader( "C:\\Users\\raf\\Desktop\\X22_BroDudeTsong.pas"));
             String line = reader.readLine();
             
             while (line != null) 
@@ -112,10 +122,6 @@ public class PascaletTest
             	if(line.contains("var"))
                 {
             		//remove var and data type; only keep variables
-            		//still not separated per variable
-            		//System.out.println(line.replace("var", "").replace((line.substring(line.lastIndexOf(":")+1)).toString(),"").replace(";", "").replace(":", "").replace(" ", "")); 
-            		
-            		//now separated per variable
             		String splitVariables = line.replace("var", "").replace((line.substring(line.lastIndexOf(":")+1)).toString(),"").replace(";", "").replace(":", "").replace(" ", "");
             		String[] splitVariablesArr = splitVariables.split("[\\, ]");
             		
@@ -125,9 +131,10 @@ public class PascaletTest
             			System.out.println(splitVariablesArr[i]);
             			valueAndType[0] = "-6969";//value initially empty, value is for checking if empty
             			valueAndType[1] = line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", "");
+            			
             			if(scopeflag==0)
             			{
-            				// Check is key exists in the Map 
+            				// Check if key exists in the Map 
             		        boolean isKeyPresent1 = global.containsKey(splitVariablesArr[i]); 
             	            if(isKeyPresent1 == false)
             	            {
@@ -167,7 +174,7 @@ public class PascaletTest
             		//System.out.println(Arrays.toString(tokens));
             		
             		//get data type
-            		System.out.println(line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", ""));
+            		//System.out.println(line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", ""));
                 }
             	
             	if(line.contains("procedure")||line.contains("function"))
@@ -178,11 +185,63 @@ public class PascaletTest
             	
             	if(line.contains("end"))
             		scopeflag=0;
-            		
+            	
                 line = reader.readLine();
                 
             }
+            
             reader.close();
+            
+            reader2 = new BufferedReader(new FileReader( "C:\\Users\\Aric\\Desktop\\X22_BroDudeTsong.pas"));
+          //reader2 = new BufferedReader(new FileReader( "C:\\Users\\raf\\Desktop\\X22_BroDudeTsong.pas"));
+            
+            line = reader2.readLine();
+            
+            while (line != null) 
+            {	
+            	if(line.contains("procedure")||line.contains("function"))
+            		scopeflag=1;
+            	
+            	if(line.contains("begin")&&scopeflag==0)
+            		scopeflag=2;
+            	
+            	if(line.contains("end"))
+            		scopeflag=0;
+            	
+                //evaluation of expressions
+            	//constants only as of now
+            	if(line.contains(":="))
+                {
+            		//if currently in function, look for variable in function first
+            		if(scopeflag==1)
+                    {
+            			//if variable was found in function
+            			if(funcproc.containsKey((line.substring(0 , line.indexOf(":"))).replace("    ","")))
+            			{
+            				if(!containsVar((line.substring(line.lastIndexOf(":")+2)).replace(";", "")))
+            				{	
+            					System.out.println((line.substring(0 , line.indexOf(":"))).replace("    ","")+"="+eval((line.substring(line.lastIndexOf(":")+2)).replace(";", ""))); 
+        						funcproc.get((line.substring(0 , line.indexOf(":"))).replace("    ",""))[0] = Double.toString(eval((line.substring(line.lastIndexOf(":")+2)).replace(";", "")));
+            				}
+            				
+            			}
+            			
+            			//if variable was not found in function, look in global declarations
+            			else if(global.containsKey((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", "")))
+            			{
+            				//System.out.println((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""));
+            				global.get((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""))[0] = Double.toString(eval((line.substring(line.lastIndexOf(":")+2)).replace(";", "")));
+            				System.out.println(global.get((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""))[0]);
+            			}
+                    }
+                }
+            	
+                line = reader2.readLine();
+                
+            }
+            
+            reader2.close();
+            System.out.println("\n\nProgram end");
         } 
     	catch (IOException e) { }
     }
