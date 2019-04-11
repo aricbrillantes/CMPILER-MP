@@ -137,9 +137,9 @@ public class PascaletTest
             		//put variable name as key and value and type as string array value for hashmap;
             		for(int i=0;i<splitVariablesArr.length;i++)
             		{
-//            			System.out.println(splitVariablesArr[i]);
-//            			valueAndType[0] = "-6969";//value initially empty, value is for checking if empty
-//            			valueAndType[1] = line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", "");
+            			//System.out.println(splitVariablesArr[i]);
+            			//valueAndType[0] = "-6969";//value initially empty, value is for checking if empty
+            			//valueAndType[1] = line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", "");
             			if(scopeflag==0)
             			{
             				// Check is key exists in the Map 
@@ -147,8 +147,8 @@ public class PascaletTest
             	            if(isKeyPresent1 == false)
             	            {
             	            	global.put(splitVariablesArr[i], new String[] {"-6969", line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", "")});
-//            	            	System.out.println("Stored in global");
-//            	            	System.out.println(Arrays.toString(global.get(splitVariablesArr[i])));
+            	            	//System.out.println("Stored in global");
+            	            	//System.out.println(Arrays.toString(global.get(splitVariablesArr[i])));
             	            }
             	            else
             	            	System.out.println("Error, duplicate variable/n/n");
@@ -159,8 +159,8 @@ public class PascaletTest
             	            if(isKeyPresent2 == false)
             	            {
             	            	funcproc.put(splitVariablesArr[i], new String[] {"-6969", line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", "")});
-//            	            	System.out.println("Stored in funcproc");
-//            	            	System.out.println(Arrays.toString(funcproc.get(splitVariablesArr[i])));
+            	            	//System.out.println("Stored in funcproc");
+            	            	//System.out.println(Arrays.toString(funcproc.get(splitVariablesArr[i])));
             	            }
             	            else
             	            	System.out.println("Error, duplicate variable/n/n");
@@ -171,8 +171,8 @@ public class PascaletTest
             	            if(isKeyPresent3 == false)
             	            {
             	            	main.put(splitVariablesArr[i], new String[] {"-6969", line.substring(line.lastIndexOf(":")+1).replace(";", "").replace(" ", "")});
-//            	            	System.out.println("Stored in main");
-//            	            	System.out.println(Arrays.toString(main.get(splitVariablesArr[i])));
+            	            	//System.out.println("Stored in main");
+            	            	//System.out.println(Arrays.toString(main.get(splitVariablesArr[i])));
             	            }
             	            else
             	            	System.out.println("Error, duplicate variable/n/n");
@@ -232,6 +232,18 @@ public class PascaletTest
                 			{
                 				if(funcproc.containsKey(splitVarsArr[i]))
                 					System.out.print(funcproc.get(splitVarsArr[i])[0] + " ");
+                				
+                				else if(global.containsKey(splitVarsArr[i]))
+                					System.out.print(global.get(splitVarsArr[i])[0] + " ");
+                			}
+                			
+                			else if(scopeflag==2)
+                			{
+                				if(main.containsKey(splitVarsArr[i]))
+                					System.out.print(main.get(splitVarsArr[i])[0] + " ");
+                				
+                				else if(global.containsKey(splitVarsArr[i]))
+                					System.out.print(global.get(splitVarsArr[i])[0] + " ");
                 			}
                 		}
                 		System.out.println();
@@ -263,7 +275,6 @@ public class PascaletTest
                 		}
             		}
         		}
-      
             	
                 //evaluation of expressions
             	if(line.contains(":="))
@@ -272,7 +283,7 @@ public class PascaletTest
             		if(scopeflag==1)
                     {
             			//if variable was found in function
-//            			System.out.println((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""));
+            			//System.out.println((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""));
             			if(funcproc.containsKey((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", "")))
             			{
             				String datatype = funcproc.get((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""))[1];
@@ -281,7 +292,7 @@ public class PascaletTest
             				if(datatype.contains("string"))
         					{
             					funcproc.get((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""))[0] = (line.substring(line.lastIndexOf(":")+2)).replace(";", "").replace("\"","");
-//            					System.out.println(funcproc.get((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""))[0]);
+            					//System.out.println(funcproc.get((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""))[0]);
         					}
             				
             				if(datatype.contains("integer"))
@@ -322,9 +333,10 @@ public class PascaletTest
             			{
             				String datatype = global.get((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""))[1];
             				System.out.println((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", "") + " "+ datatype+ " found in global");
+            				
             				if(datatype.contains("string"))
             				{
-//            					dtaty
+
             				}
             				
             			
@@ -336,7 +348,7 @@ public class PascaletTest
             				
             				if(datatype.contains("float"))
             				{
-//            					funcproc.get((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""))[0] = Double.toString(eval((line.substring(line.lastIndexOf(":")+2)).replace(";", "")));
+            					//funcproc.get((line.substring(0 , line.indexOf(":"))).replace("    ","").replace("	", ""))[0] = Double.toString(eval((line.substring(line.lastIndexOf(":")+2)).replace(";", "")));
             				}            
             			}
                     }
