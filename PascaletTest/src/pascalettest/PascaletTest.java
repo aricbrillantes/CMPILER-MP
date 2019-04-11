@@ -131,6 +131,8 @@ public class PascaletTest
     	HashMap<String, String[]> funcproc = new HashMap<String, String[]>();
     	HashMap<String, HashMap<String, String[]>> procOuter = new HashMap<String, HashMap<String, String[]>>();
     	HashMap<String, String[]> procInner;
+    	HashMap<String, HashMap<String, String[]>> funcOuter = new HashMap<String, HashMap<String, String[]>>();
+    	HashMap<String, String[]> funcInner;
     	
     	// flag if may naread na procedure or function then magchchange ang pag read sa begin
     	int scopeflag=0;	//0 is global, 1 is procedure or function, 2 is inside main
@@ -143,8 +145,8 @@ public class PascaletTest
     	try 
         {
     		//replace with file path of pascal file
-            reader = new BufferedReader(new FileReader( "C:\\Users\\Aric\\Desktop\\X22_BroDudeTsong.pas"));
-            //reader = new BufferedReader(new FileReader( "C:\\Users\\raf\\Desktop\\X22_BroDudeTsong.pas"));
+//            reader = new BufferedReader(new FileReader( "C:\\Users\\Aric\\Desktop\\X22_BroDudeTsong.pas"));
+            reader = new BufferedReader(new FileReader( "C:\\Users\\raf\\Desktop\\X22_BroDudeTsong.pas"));
             String line = reader.readLine();
             
             while (line != null) 
@@ -211,51 +213,113 @@ public class PascaletTest
             	if(line.contains("end"))
             		scopeflag=0;
             	
-            	if(line.toLowerCase().contains("procedure"))
+            	if(line.toLowerCase().contains("procedure")&&!line.toLowerCase().contains("{")&&!line.toLowerCase().contains("="))
                 {
-//            		System.out.println("\n");
+            		System.out.println("\n");
             		int indexctr=0;
             		int semiIndex=0;
-            		String procname = line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.lastIndexOf("procedure")+10, line.indexOf("(")-1);
+            		String procname = line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("procedure")+10, line.replace(" ", "").replaceAll("\\s+","").indexOf("(")-1);
             		if(!line.replace(" ", "").replaceAll("\\s+","").contains("()"))
-            		{
-	            		String procparam = line.replace(" ", "").replaceAll("\\s+","").substring(line.lastIndexOf("("),line.lastIndexOf(")")-3).replace(")", "");
-	            		procInner = new HashMap<String, String[]>();
-	            		
-	//            		System.out.println("hi "+procparam.substring(indexctr, procparam.indexOf(":", indexctr)));
-	            		boolean isKeyPresent = procOuter.containsKey(line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.lastIndexOf("procedure")+10, line.indexOf("(")-1)); 
-	    	            if(isKeyPresent == false)
-	    	            {
-	    	        		while(procparam.indexOf(":", indexctr)!=-1)
-	    	        		{
-	    	        			String[] parameter = procparam.substring(indexctr, procparam.indexOf(":", indexctr)).split("[\\, ]");
-	    	        			for(int i=0;i<parameter.length;i++)
-	    	            		{
-	    	        				
-	    	            			procInner.put(parameter[i], new String[] {"<empty>", procparam.substring(procparam.indexOf(":",indexctr)+1, procparam.indexOf(";", semiIndex))});
-	    	            			//System.out.println(parameter[i]);
-	    	            			//System.out.println("Stored in inner");
-	    	            			//System.out.println(Arrays.toString(procInner.get(parameter[i])));
-	    	            		}
-	    	        			indexctr=procparam.indexOf(";",indexctr);
-	    	        			indexctr++;
-	    	        			semiIndex=procparam.indexOf(";", indexctr);
-	//    	        			semiIndex++;
-	    	        		}
-	    	        		procOuter.put(line.replace(" ", "").replaceAll("\\s+","").substring(line.lastIndexOf("procedure")+10, line.indexOf("(")-1), procInner);
-	    	            }
-	    	            else
-	    	            {
-	    	            	System.out.println("Error, Duplicate Procedure");
-	    	            }
+            		{	
+            			String procparam = line.replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("(")+1,line.replace(" ", "").replaceAll("\\s+","").lastIndexOf(")")+1).replace(")", ";");
+    	        		procInner = new HashMap<String, String[]>();
+    	        		
+    	        		System.out.println(procparam);
+    	        		boolean isKeyPresent = procOuter.containsKey(line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.lastIndexOf("procedure")+10, line.indexOf("(")-1)); 
+    		            if(isKeyPresent == false)
+    		            {
+    		        		while(procparam.indexOf(":", indexctr)!=-1)
+    		        		{
+    		        			
+    		        			
+    		        			String[] parameter = procparam.substring(indexctr, procparam.indexOf(":", indexctr)).split("[\\, ]");
+    		        			for(int i=0;i<parameter.length;i++)
+    		            		{
+    		        				
+    		            			procInner.put(parameter[i], new String[] {"-6969", procparam.substring(procparam.indexOf(":",indexctr)+1, procparam.indexOf(";", semiIndex))});
+    		            			System.out.println(parameter[i]);
+    		            			System.out.println("Stored in inner "+line.replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("procedure")+10, line.replace(" ", "").replaceAll("\\s+","").indexOf("(")));
+    		            			System.out.println(Arrays.toString(procInner.get(parameter[i])));
+    		            		}
+    		        			indexctr=procparam.indexOf(";",indexctr);
+    		        			indexctr++;
+    		        			semiIndex=procparam.indexOf(";", indexctr);
+    	//	        			semiIndex++;
+    		        		}
+    		        		procOuter.put(line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("procedure")+10, line.replace(" ", "").replaceAll("\\s+","").indexOf("(")), procInner);
+    		            }
+    		            else
+    		            {
+    		            	System.out.println("Error, Duplicate Procedure");
+    		            }
             		}
             		else
             		{
+            			System.out.println("nothing to add");
             			procInner = new HashMap<String, String[]>();
-            			procInner.put("<empty>", new String[] {"<empty>","<empty>"});
-            			procOuter.put(line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.lastIndexOf("procedure")+10, line.indexOf("(")-1),procInner);
+            			procInner.put("-6969", new String[] {"-6969","-6969"});
+            			procOuter.put(line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("procedure")+10, line.replace(" ", "").replaceAll("\\s+","").indexOf("(")-1),procInner);
             		}
-//    	            System.out.println("\n");
+    	            System.out.println("\n");
+    	            
+//            		System.out.println(procparam.substring(procparam.indexOf(":",indexctr)+1, procparam.indexOf(";", semiIndex)));
+//            		System.out.println(procparam);
+            		
+                }
+            	
+            	
+            	if(line.toLowerCase().contains("function")&&!line.toLowerCase().contains("{")&&!line.toLowerCase().contains("="))
+                {
+            		System.out.println("\n");
+            		int indexctr=0;
+            		int semiIndex=0;
+            		String funcname = line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("function")+9, line.replace(" ", "").replaceAll("\\s+","").indexOf("("));
+            		if(!line.replace(" ", "").replaceAll("\\s+","").contains("()"))
+            		{	
+            			String funcparam = line.replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("(")+1,line.replace(" ", "").replaceAll("\\s+","").lastIndexOf(")")+1).replace(")", ";");
+    	        		funcInner = new HashMap<String, String[]>();
+    	        		
+    	        		System.out.println(funcparam);
+    	        		boolean isKeyPresent = funcOuter.containsKey(line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.lastIndexOf("function")+9, line.indexOf("(")-1)); 
+    		            if(isKeyPresent == false)
+    		            {
+    		        		while(funcparam.indexOf(":", indexctr)!=-1)
+    		        		{
+    		        			
+    		        			
+    		        			String[] parameter = funcparam.substring(indexctr, funcparam.indexOf(":", indexctr)).split("[\\, ]");
+    		        			for(int i=0;i<parameter.length;i++)
+    		            		{
+    		        				
+    		            			funcInner.put(parameter[i], new String[] {"-6969", funcparam.substring(funcparam.indexOf(":",indexctr)+1, funcparam.indexOf(";", semiIndex))});
+    		            			System.out.println(parameter[i]);
+    		            			System.out.println("Stored in innerfunc");
+    		            			System.out.println(Arrays.toString(funcInner.get(parameter[i])));
+    		            		}
+    		        			indexctr=funcparam.indexOf(";",indexctr);
+    		        			indexctr++;
+    		        			semiIndex=funcparam.indexOf(";", indexctr);
+    	//	        			semiIndex++;
+    		        		}
+    		        		funcInner.put("return69", new String[] {"-6969",line.replace(" ", "").replaceAll("\\s+","").toLowerCase().substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf(":")+1,line.replace(" ", "").replaceAll("\\s+","").lastIndexOf(";"))});
+    		        		System.out.println(line.replace(" ", "").replaceAll("\\s+","").toLowerCase().substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf(":")+1,line.replace(" ", "").replaceAll("\\s+","").lastIndexOf(";")));
+    		        		System.out.println(Arrays.toString(funcInner.get("return69")));
+    		        		System.out.println(line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("function")+8, line.replace(" ", "").replaceAll("\\s+","").indexOf("(")));
+    		        		funcOuter.put(line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("function")+8, line.replace(" ", "").replaceAll("\\s+","").indexOf("(")), funcInner);
+    		            }
+    		            else
+    		            {
+    		            	System.out.println("Error, Duplicate Function");
+    		            } 
+            		}
+            		else
+            		{
+            			System.out.println("nothing to add");
+            			funcInner = new HashMap<String, String[]>();
+            			funcInner.put("-6969", new String[] {"-6969","-6969"});
+            			funcOuter.put(line.toLowerCase().replace(" ", "").replaceAll("\\s+","").substring(line.replace(" ", "").replaceAll("\\s+","").lastIndexOf("function")+9, line.replace(" ", "").replaceAll("\\s+","").indexOf("(")-1),funcInner);
+            		}
+    	            System.out.println("\n");
     	            
 //            		System.out.println(procparam.substring(procparam.indexOf(":",indexctr)+1, procparam.indexOf(";", semiIndex)));
 //            		System.out.println(procparam);
@@ -268,8 +332,8 @@ public class PascaletTest
                         
             reader.close();
             
-            reader2 = new BufferedReader(new FileReader( "C:\\Users\\Aric\\Desktop\\X22_BroDudeTsong.pas"));
-            //reader2 = new BufferedReader(new FileReader( "C:\\Users\\raf\\Desktop\\X22_BroDudeTsong.pas"));
+//            reader2 = new BufferedReader(new FileReader( "C:\\Users\\Aric\\Desktop\\X22_BroDudeTsong.pas"));
+            reader2 = new BufferedReader(new FileReader( "C:\\Users\\raf\\Desktop\\X22_BroDudeTsong.pas"));
             
             line = reader2.readLine();
             
